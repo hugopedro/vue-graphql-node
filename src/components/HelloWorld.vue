@@ -1,7 +1,7 @@
 <template>
   <v-container>
-    <v-row class="text-center">
-      <v-col cols="12" class="slogan ma-0 pa-0">
+    <v-row>
+      <v-col cols="12" class="text-center slogan ma-0 pa-0">
         <h1>
           NameGator
         </h1>
@@ -12,95 +12,22 @@
         <br/>
       </v-col>
       <v-col class="main ma-0 pa-0">
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col>
-        <h3>Prefixos <v-badge color="green" :content=prefixes.length></v-badge></h3>
-        <li class="list-group-item" v-for="prefix in prefixes" :key="prefix">
-          {{ prefix }}
-          <div class="d-flex flex-row-reverse mb-16">
-            <v-btn @click="deletePrefix(prefix)" class="mx-2" fab dark small color="primary" > <v-icon dark> mdi-minus </v-icon></v-btn>
-          </div>
-        </li>
-        <v-text-field input type="text" class="form-control" placeholder="Digite o prefixo"
-        v-model="prefix" v-on:keyup.enter="addPrefix(prefix)">
-        </v-text-field>
-      </v-col>
-      <v-col>
-      <h3>Sufixos <v-badge color="green" :content=sufixes.length></v-badge></h3>
-        <li class="list-group-item" v-for="sufix in sufixes" :key="sufix">
-          {{ sufix }}
-            <div class="d-flex flex-row-reverse mb-16">
-              <v-btn @click="deleteSufix(sufix)" class="mx-2" fab dark small color="primary" > <v-icon dark> mdi-minus </v-icon></v-btn>
-          </div>
-        </li>
-        <v-text-field input type="text" class="form-control" placeholder="Digite o sufixo"
-        v-model="sufix" v-on:keyup.enter="addSufix(sufix)">
-        </v-text-field>
-      </v-col>
-    </v-row>
-    <br/>
-    <h2>Domínios <v-badge color="blue" :content=domains.length></v-badge></h2>
-    <v-row>
-      <v-col>
-        <li class="list-group-item" v-for="domain in domains" :key="domain.name">
-          <v-col>
-            {{ domain.name }}
-            <v-btn color="red" v-bind:href="domain.checkout" target="_blank"><v-icon>mdi-cart</v-icon></v-btn>
-          </v-col>
-        </li>
+        <domain-list />
       </v-col>
     </v-row>
   </v-container>
 </template>
 
 <script>
+
+import DomainList from './DomainList.vue';
+
 export default {
   name: "HelloWorld",
 
-  data: () => ({
-    prefix: "",
-    sufix: "",
-    prefixes: ['Air', 'Jet', 'Flight'],
-    sufixes: ['Hub', 'Station', 'Mart']
-  }),
-  methods: {
-    addPrefix(prefix) {
-      this.prefixes.push(prefix);
-      this.prefix = "";
-      
-    },
-    deletePrefix(prefix) {
-      this.prefixes.splice(this.prefixes.indexOf(prefix), 1);
-      
-    },
-    addSufix(sufix) {
-      this.sufixes.push(sufix);
-      this.sufix = "";
-      
-    },
-    deleteSufix(sufix) {
-      this.sufixes.splice(this.sufixes.indexOf(sufix), 1);
-      
-    },
+  components: {
+    DomainList
   },
-  computed: { //o bom do computed é que só atualiza na hora certa, evitando gargalos
-    domains() {
-      const domains = [];
-      for (const prefix of this.prefixes) {
-        for (const sufix of this.sufixes) {
-          const name = prefix + sufix;
-          const url = name.toLowerCase();
-          const checkout = `https://checkout.hostgator.com.br/?a=adds&sld=${url}&tld=.com.br`
-          domains.push({
-            name, checkout, 
-          });
-        }
-      }
-      return domains;
-    }
-  }
 }
 </script>
 
@@ -117,10 +44,3 @@ export default {
 }
 
 </style>
-
-<!-- 
-https://www.youtube.com/watch?v=zhbOh6zFCuc&list=PLQCmSnNFVYnTiC-pPY0SySbf-ZNGBwnaG&index=2
-
-tem que ver porque quando clica no delete ele adiciona mais na lista... affs
-
--->
