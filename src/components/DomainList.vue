@@ -37,6 +37,8 @@
               ><v-icon>mdi-cart</v-icon></v-btn
             >
           </v-col>
+            <v-badge color="blue" :content="(domain.available ? 'Disponivel' : 'Não Disponivel')">
+              </v-badge>
         </li>
       </v-col>
     </v-row>
@@ -60,6 +62,7 @@ export default {
         prefix: [],
         sufix: [],
       },
+      domains: []
     };
   },
   methods: {
@@ -86,6 +89,7 @@ export default {
         const query = response.data;
         const newItem = query.data.newItem;
         this.items[item.type].push(newItem);
+        this.generateDomains();
       })
     }, //deleted é um alias
     deleteItem(item) {
@@ -103,11 +107,12 @@ export default {
           }
         }
       }).then(() => {
-        this.getItems(item.type);
+        this.items[item.type].splice(this.items[item.type].indexOf(item), 1);
+        this.generateDomains();
       });
     },
     getItems(type) {
-			axios({
+			return axios({
 				url: "http://localhost:4000",
 				method: "post",
 				data: {
@@ -128,29 +133,35 @@ export default {
 				const query = response.data;
 				this.items[type] = query.data.items;
 			});
-		},
+    },
+    generateDomains() {
+      axios({
+        url: "http://localhost:4000",
+        method: "post",
+        data: {
+          query: `
+            mutation {
+              domains: generateDomains {
+                name
+                checkout
+                available
+              }
+            }
+          `
+        }
+      }).then((response) => {
+        const query = response.data;
+        this.domains = query.data.domains; 
+      });
+    }
   },
-	computed: { //o bom do computed é que ele só atualiza na hora certa, evitando gargalos
-		domains() {
-			console.log("generating domains...");
-			const domains = [];
-			for (const prefix of this.items.prefix) {
-				for (const sufix of this.items.sufix) {
-					const name = prefix.description + sufix.description;
-					const url = name.toLowerCase();
-					const checkout = `https://checkout.hostgator.com.br/?a=add&sld=${url}&tld=.com.br`;
-					domains.push({
-						name,
-						checkout
-					});
-				}
-			}
-			return domains;
-		}
-	},
   created() {
-		this.getItems("prefix");
-		this.getItems("sufix");
+    Promise.all([
+      this.getItems("prefix"),
+      this.getItems("sufix")
+    ]).then(() => {
+      this.generateDomains();
+    });
   },
 };
 </script>
