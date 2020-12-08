@@ -1,6 +1,7 @@
 <template>
   <v-container>
     <v-row>
+      <hello-world />
       <v-col>
         <app-item-list
           title="Prefixos"
@@ -36,6 +37,8 @@
             <v-btn color="red" v-bind:href="domain.checkout" target="_blank"
               ><v-icon>mdi-cart</v-icon></v-btn
             >
+            &nbsp;
+            <v-btn color="purple" @click="openDomain(domain)"><v-icon>mdi-magnify-plus-outline</v-icon></v-btn>
           </v-col>
             <v-badge color="blue" :content="(domain.available ? 'Disponivel' : 'Não Disponivel')">
               </v-badge>
@@ -48,12 +51,13 @@
 <script>
 import axios from "axios/dist/axios";
 import AppItemList from "./AppItemList.vue";
+import HelloWorld from './HelloWorld.vue';
 
 export default {
-  name: "HelloWorld",
+  name: "DomainList",
 
   components: {
-    AppItemList,
+    AppItemList, HelloWorld
   },
 
   data: function () {
@@ -153,6 +157,11 @@ export default {
         const query = response.data;
         this.domains = query.data.domains; 
       });
+    },
+    openDomain(domain) {
+      this.$router.push({
+        path: `/domains/${domain.name}`
+      })
     }
   },
   created() {

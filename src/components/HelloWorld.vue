@@ -12,7 +12,6 @@
         <br/>
       </v-col>
       <v-col class="main ma-0 pa-0">
-        <domain-list />
       </v-col>
     </v-row>
   </v-container>
@@ -20,14 +19,8 @@
 
 <script>
 
-import DomainList from './DomainList.vue';
-
 export default {
   name: "HelloWorld",
-
-  components: {
-    DomainList
-  },
 }
 </script>
 
