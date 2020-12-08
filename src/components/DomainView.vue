@@ -5,8 +5,26 @@
       <router-link to="/domains">Voltar</router-link>
       <br/>
       <h2>{{ domain }}</h2>
-      {{ domains }}
+      <br />
     </v-col>
+  </v-row>
+  <v-row>
+    <v-col>
+        <li
+          class="list-group-item"
+          v-for="domain in domains"
+          :key="domain.extension"
+        >
+          <v-col>
+            {{ domain.extension }}
+            <v-btn color="red" v-bind:href="domain.checkout" target="_blank"
+              ><v-icon>mdi-cart</v-icon></v-btn
+            >
+          </v-col>
+            <v-badge color="blue" :content="(domain.available ? 'Disponivel' : 'Não Disponivel')">
+              </v-badge>
+        </li>
+      </v-col>
   </v-row>
 </v-container>
 </template>
@@ -31,6 +49,7 @@ export default {
           mutation ($name: String) {
             domains: generateDomain(name: $name) {
               name
+              extension
               checkout
               available
             }
