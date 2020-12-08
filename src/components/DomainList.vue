@@ -49,9 +49,9 @@
 </template>
 
 <script>
-import axios from "axios/dist/axios";
 import AppItemList from "./AppItemList.vue";
 import HelloWorld from './HelloWorld.vue';
+import { mapState, mapActions } from "vuex";
 
 export default {
   name: "DomainList",
@@ -61,117 +61,37 @@ export default {
   },
 
   data: function () {
-    return {
-      items: {
-        prefix: [],
-        sufix: [],
-      },
-      domains: []
-    };
+    return {};
   },
-  methods: {
+  methods: {/*
     addItem(item) {
-      axios({
-        // esse newPrefix é um apelido que estou dando ao saveItem
-        url: "http://localhost:4000",
-        method: "post",
-        data: {
-          query: `
-            mutation ($item: ItemInput) {
-              newItem: saveItem(item: $item) {
-                id
-                type
-                description
-              }
-            }
-          `,
-          variables: {
-            item
-          },
-        },
-      }).then((response) => {
-        const query = response.data;
-        const newItem = query.data.newItem;
-        this.items[item.type].push(newItem);
-        this.generateDomains();
-      })
-    }, //deleted é um alias
+      this.$store.dispatch("addItem", item);
+    },
     deleteItem(item) {
-      axios({
-        url: "http://localhost:4000",
-        method: "post",
-        data: {
-          query: `
-            mutation($id: Int) {
-              deleted: deleteItem(id: $id)
-            }
-          `,
-          variables: {
-            id: item.id
-          }
-        }
-      }).then(() => {
-        this.items[item.type].splice(this.items[item.type].indexOf(item), 1);
-        this.generateDomains();
-      });
+      this.$store.dispatch("deleteItem", item);
     },
     getItems(type) {
-			return axios({
-				url: "http://localhost:4000",
-				method: "post",
-				data: {
-					query: `
-						query ($type: String) {
-							items: items (type: $type) {
-								id
-								type
-								description
-							}
-						}
-					`,
-					variables: {
-						type
-					}
-				}
-			}).then((response) => {
-				const query = response.data;
-				this.items[type] = query.data.items;
-			});
+			this.$store.dispatch("getItems", type);
     },
     generateDomains() {
-      axios({
-        url: "http://localhost:4000",
-        method: "post",
-        data: {
-          query: `
-            mutation {
-              domains: generateDomains {
-                name
-                checkout
-                available
-              }
-            }
-          `
-        }
-      }).then((response) => {
-        const query = response.data;
-        this.domains = query.data.domains; 
-      });
-    },
+      this.$store.dispatch("generateDomains");
+    }, isso equivale ao codigo abaixo (depois da funcao openDomain) */
     openDomain(domain) {
       this.$router.push({
         path: `/domains/${domain.name}`
       })
-    }
+    }, 
+    ...mapActions(["addItem", "deleteItem", "getItems", "generateDomains"])
   },
-  created() {
-    Promise.all([
-      this.getItems("prefix"),
-      this.getItems("sufix")
-    ]).then(() => {
-      this.generateDomains();
-    });
-  },
+  computed: {
+    /*items() {
+      return this.$store.state.items;
+    },
+    domains() {
+      return this.$store.state.domains;
+    },  isso equivale a linha abaixo */
+    ...mapState(["items", "domains"])
+  }
 };
 </script>
 
